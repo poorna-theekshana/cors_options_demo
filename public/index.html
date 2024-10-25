@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CORS Demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>CORS Demo</h1>
+      <select id="endpointSelect">
+        <option value="open-data">Open Data</option>
+        <option value="restricted-data">Restricted Data</option>
+      </select>
+      <button onclick="fetchData()">Fetch Selected Data</button>
+      <p id="response" class="response-text"></p>
+      <p id="status" class="status-text"></p>
+    </div>
+
+    <script>
+      async function fetchData() {
+        const endpoint = document.getElementById('endpointSelect').value;
+        const apiUrl = `http://localhost:4000/${endpoint}`;
+        const statusElement = document.getElementById('status');
+        const responseElement = document.getElementById('response');
+
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'GET',
+            credentials: 'include', // Include cookies if applicable
+          });
+
+          if (!response.ok) throw new Error('Failed to fetch data');
+
+          const data = await response.json();
+          responseElement.textContent = `Response: ${data.message}`;
+          statusElement.textContent = 'Request successful!';
+          statusElement.style.color = 'green';
+        } catch (error) {
+          responseElement.textContent = 'No response or blocked by CORS policy';
+          statusElement.textContent =
+            'Request blocked due to CORS or error in fetching data';
+          statusElement.style.color = 'red';
+        }
+      }
+    </script>
+  </body>
+</html>
